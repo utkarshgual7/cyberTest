@@ -1,0 +1,207 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    color: #f0f0f0;
+    background-color: #1a1a1a;
+    line-height: 1.6;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background-color: #2b2b2b;
+}
+
+.logo h1 {
+    color: #00ff7f;
+    font-size: 1.8em;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li a {
+    color: #f0f0f0;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #00ff7f;
+}
+
+.register-btn {
+    padding: 8px 15px;
+    color: #f9fbfa;
+    border: 2px solid #00ff7f;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.register-btn:hover {
+    background-color: #00ff7f;
+    color: #1a1a1a;
+}
+
+.hero {
+    height: 85vh;
+    background-color: #2b2b2b; /* Removed image, added solid background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.user-info{
+    font-size: 2rem;
+    color: #00ff7f;
+    margin-bottom: 15px;
+   
+
+}
+
+.hero-content h2 {
+    font-size: 4rem;
+    color: #00ff7f;
+    margin-bottom: 15px;
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #f0f0f0;
+}
+
+.hero-content .btn {
+    padding: 10px 20px;
+    background-color: #00ff7f;
+    color: #1a1a1a;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.hero-content .btn:hover {
+    background-color: #00cc66;
+}
+
+section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+section h2 {
+    font-size: 2.5rem;
+    color: #00ff7f;
+    margin-bottom: 30px;
+}
+
+.about p, .faq p, .leaderboard p {
+    font-size: 1.2rem;
+    color: #d1d1d1;
+}
+
+.event-highlights {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.highlight {
+    background-color: #2b2b2b;
+    padding: 20px;
+    border-radius: 10px;
+    width: 280px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.highlight h3 {
+    color: #00ff7f;
+    margin-bottom: 10px;
+}
+
+.highlight:hover {
+    transform: translateY(-5px);
+}
+
+.leaderboard table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 15px;
+    text-align: left;
+    color: #f0f0f0;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.leaderboard th {
+    background-color: #00ff7f;
+    color: #1a1a1a;
+    font-size: 1.1rem;
+}
+
+.faq-item {
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.faq-item h3 {
+    font-size: 1.5rem;
+    color: #00ff7f;
+    margin-bottom: 10px;
+}
+
+.faq-item p {
+    color: #d1d1d1;
+}
+
+footer {
+    padding: 20px;
+    background-color: #2b2b2b;
+    text-align: center;
+    color: #d1d1d1;
+    font-size: 1rem;
+}
+
+footer p {
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hero-content h2 {
+        font-size: 2.5rem;
+    }
+
+    .highlight {
+        width: 100%;
+    }
+
+    .leaderboard table {
+        width: 100%;
+    }
+}

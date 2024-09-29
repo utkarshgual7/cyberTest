@@ -1,0 +1,99 @@
+
+
+.hero-content h2 {
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+.hero-content p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.hero-content .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.hero-content .btn:hover {
+    background: #555;
+}
+
+/* Quiz Section */
+.quiz-section {
+    padding: 20px;
+
+    text-align: center;
+}
+
+.quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.quiz-container p.quiz-clue {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.quiz-container input[type="text"] {
+    padding: 10px;
+    width: calc(100% - 22px);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.quiz-container button {
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.quiz-container button:hover {
+    background: #555;
+}
+
+#hint p {
+    font-size: 1em;
+}
+
+/* About Section */
+.about-section {
+    padding: 20px;
+    text-align: center;
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    nav ul {
+        text-align: center;
+    }
+
+    nav ul li {
+        display: block;
+        margin: 5px 0;
+    }
+
+    .hero-content h2 {
+        font-size: 1.5em;
+    }
+
+    .hero-content p {
+        font-size: 1em;
+    }
+
+    .quiz-container input[type="text"],
+    .quiz-container button {
+        width: 100%;
+    }
+}

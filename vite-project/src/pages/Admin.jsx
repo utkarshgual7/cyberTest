@@ -1,15 +1,23 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const Admin = () => {
   const [isTestEnabled, setIsTestEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null); // New state for success message
+  const [successMessage, setSuccessMessage] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(null);
+  const admin = useSelector((state) => state.User1.User1.user.role);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (admin !== "admin") {
+      setError("You are not authorized to access this page");
+      navigate("/");
+      return;
+    }
     const fetchTestStatus = async () => {
       try {
         const response = await fetch("/api/test/getstatus");

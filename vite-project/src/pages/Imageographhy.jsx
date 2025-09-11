@@ -1,17 +1,31 @@
 import React, { useState } from "react";
-import axios from "axios"; // Missing import
+import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import "../styles/Message.css";
 
 const Imageograpghy = () => {
-  const { name, email } = useSelector((state) => state.User1.User1);
+    const { name, email } = useSelector((state) => state.User1.User1.user);
+  
   const [password, setPassword] = useState("");
   const [result, setResult] = useState("");
-  const [canProceed, setCanProceed] = useState(false); // Added state for enabling next test
+  const [resultType, setResultType] = useState(""); // 'error' or 'success'
+  const [canProceed, setCanProceed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const submitPassword = async () => {
+    if (!password.trim()) {
+      setResult("Please enter a password.");
+      setResultType("error");
+      return;
+    }
+
+    setIsLoading(true);
+    setResult("");
+    setResultType("");
+
     try {
       const response = await axios.post("/api/score/submit-password-phase2", {
         name,
@@ -21,20 +35,43 @@ const Imageograpghy = () => {
 
       if (response.status === 200) {
         setResult("Password correct! You may proceed to =>");
-        setCanProceed(true); // Enable the next test
+        setResultType("success");
+        setCanProceed(true);
       } else {
-        setResult("Incorrect password.");
+        setResult(response.data.message || "Incorrect password.");
+        setResultType("error");
         setCanProceed(false);
       }
     } catch (error) {
-      setResult(error.response?.data?.message || "Error submitting password.");
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.data && error.response.data.message) {
+          setResult(error.response.data.message);
+        } else if (error.response.status === 401) {
+          setResult("Authentication failed. Please log in again.");
+        } else if (error.response.status === 400) {
+          setResult("Invalid submission. Please try again.");
+        } else {
+          setResult("Error submitting password. Please try again.");
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        setResult("Network error. Please check your connection and try again.");
+      } else {
+        // Something else happened
+        setResult("An unexpected error occurred. Please try again.");
+      }
+      setResultType("error");
+      setCanProceed(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const downloadFile = async () => {
     try {
       const response = await fetch(
-        "https://drive.google.com/uc?export=download&id=16vLL009yoCs3ejLSb6iAWqBpZJrPDm7g" // Adjusted URL for direct download
+        "https://drive.google.com/uc?export=download&id=1zWzZs4FWUI60xoz7FenmJ6XTRB4I1bsh"
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -43,25 +80,15 @@ const Imageograpghy = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "ctf.pdf"; // Set the file name
+      a.download = "ctf.pdf";
       document.body.appendChild(a);
       a.click();
       a.remove();
-      window.URL.revokeObjectURL(url); // Clean up
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading the file:", error);
+      alert("Error downloading the file. Please try again.");
     }
-  };
-
-  const resultMessageStyle = {
-    padding: "15px",
-    marginTop: "20px",
-    border: "1px solid #4CAF50",
-    backgroundColor: "#f9f9f9",
-    color: "#4CAF50",
-    borderRadius: "5px",
-    fontSize: "15px",
-    fontWeight: "bold",
   };
 
   const buttonStyle = {
@@ -74,6 +101,12 @@ const Imageograpghy = () => {
     textAlign: "center",
     fontSize: "12px",
     transition: "background-color 0.3s, transform 0.3s",
+  };
+
+  const buttonDisabledStyle = {
+    ...buttonStyle,
+    backgroundColor: "#cccccc",
+    cursor: "not-allowed",
   };
 
   return (
@@ -108,13 +141,9 @@ const Imageograpghy = () => {
             message remains undetected...
           </p>
           {/* Download Image Button */}
-          <a
-            href="https://drive.google.com/uc?export=download&id=1zWzZs4FWUI60xoz7FenmJ6XTRB4I1bsh" // Updated download URL
-            download
-            className="btn"
-          >
+          <button onClick={downloadFile} className="btn" style={buttonStyle}>
             Download Image to crack
-          </a>
+          </button>
         </div>
       </section>
 
@@ -137,20 +166,29 @@ const Imageograpghy = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter the password"
             aria-label="Enter password"
+            disabled={isLoading}
           />
-          <button onClick={submitPassword} style={buttonStyle}>
-            Submit
+          <button 
+            onClick={submitPassword} 
+            style={isLoading ? buttonDisabledStyle : buttonStyle}
+            disabled={isLoading}
+          >
+            {isLoading ? "Submitting..." : "Submit"}
           </button>
+          
           {/* Display result message */}
           {result && (
-            <p style={resultMessageStyle}>
+            <div className={`message ${resultType}`}>
               {result}
               {canProceed && (
-                <a style={buttonStyle} href="/webexploit">
+                <a 
+                  style={{...buttonStyle, marginLeft: "10px", textDecoration: "none"}} 
+                  href="/webexploit"
+                >
                   Next Test
                 </a>
               )}
-            </p>
+            </div>
           )}
           <div id="hint">
             <p>

@@ -5,9 +5,10 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const CtfPasswordChallenge = () => {
-  const { name, email } = useSelector((state) => state.User1.User1);
+  const { name, email } = useSelector((state) => state.User1.User1.user);
   const [password, setPassword] = useState("");
   const [result, setResult] = useState("");
+  const [isError, setIsError] = useState(false);
   const [canProceed, setCanProceed] = useState(false);
   const navigate = useNavigate();
 
@@ -21,13 +22,20 @@ const CtfPasswordChallenge = () => {
 
       if (response.status === 200) {
         setResult("Password correct! You may proceed to =>");
+        setIsError(false);
         setCanProceed(true); // Enable the next test
       } else {
-        setResult("Incorrect password.");
+        setResult(response.data.message || "Incorrect password.");
+        setIsError(true);
         setCanProceed(false);
       }
     } catch (error) {
-      setResult(error.response?.data?.message || "Error submitting password.");
+      if (error.response && error.response.data && error.response.data.message) {
+        setResult(error.response.data.message);
+      } else {
+        setResult("Error submitting password. Please try again.");
+      }
+      setIsError(true);
     }
   };
 
@@ -56,12 +64,23 @@ const CtfPasswordChallenge = () => {
   const resultMessageStyle = {
     padding: "15px",
     marginTop: "20px",
-    border: "1px solid #4CAF50",
-    backgroundColor: "#f9f9f9",
-    color: "#4CAF50",
     borderRadius: "5px",
     fontSize: "15px",
     fontWeight: "bold",
+  };
+
+  const errorMessageStyle = {
+    ...resultMessageStyle,
+    border: "1px solid #f44336",
+    backgroundColor: "#ffebee",
+    color: "#f44336",
+  };
+
+  const successMessageStyle = {
+    ...resultMessageStyle,
+    border: "1px solid #4CAF50",
+    backgroundColor: "#f9f9f9",
+    color: "#4CAF50",
   };
 
   const buttonStyle = {
@@ -72,18 +91,14 @@ const CtfPasswordChallenge = () => {
     borderRadius: "5px",
     cursor: "pointer",
     textAlign: "center",
-    fontSize: "12px",
+    fontSize: "16px",
     transition: "background-color 0.3s, transform 0.3s",
   };
 
-  const buttonHoverStyle = {
+  const buttonDisabledStyle = {
     ...buttonStyle,
-    backgroundColor: "gray",
-  };
-
-  const buttonActiveStyle = {
-    ...buttonStyle,
-    transform: "scale(0.95)",
+    backgroundColor: "#cccccc",
+    cursor: "not-allowed",
   };
 
   return (
@@ -145,10 +160,17 @@ const CtfPasswordChallenge = () => {
             onClick={downloadFile}
             className="btn"
             style={buttonStyle}
-            onMouseOver={(e) => (e.target.style = buttonHoverStyle)}
-            onMouseOut={(e) => (e.target.style = buttonStyle)}
-            onMouseDown={(e) => (e.target.style = buttonActiveStyle)}
-            onMouseUp={(e) => (e.target.style = buttonStyle)}
+            onMouseOver={(e) =>
+              (e.target.style.backgroundColor =
+                buttonHoverStyle.backgroundColor)
+            }
+            onMouseOut={(e) =>
+              (e.target.style.backgroundColor = buttonStyle.backgroundColor)
+            }
+            onMouseDown={(e) =>
+              (e.target.style.transform = buttonActiveStyle.transform)
+            }
+            onMouseUp={(e) => (e.target.style.transform = "none")}
           >
             DOWNLOAD PDF FILE
           </button>
@@ -174,25 +196,34 @@ const CtfPasswordChallenge = () => {
             placeholder="Enter the password"
             aria-label="Enter password"
           />
-          <button onClick={submitPassword} style={buttonStyle}>
+          <button onClick={submitPassword} style={password ? buttonStyle : buttonDisabledStyle}>
             Submit
           </button>
+
+          {/* Display result message */}
+          {result && (
+            <div
+              style={isError ? errorMessageStyle : successMessageStyle}
+              aria-live="polite"
+            >
+              {result}
+              {canProceed && (
+                <a
+                  style={{ ...buttonStyle, marginLeft: "10px" }}
+                  href="/imageography"
+                >
+                  Next Test
+                </a>
+              )}
+            </div>
+          )}
+
           <div id="hint">
             <p>
               Hint: Count the letters in each word, and combine those numbers to
               form the password.
             </p>
           </div>
-
-          {/* Display result message */}
-          {result && (
-            <p style={resultMessageStyle}>
-              {result}
-              <a style={buttonStyle} href="/imageography">
-                Next Test
-              </a>
-            </p>
-          )}
         </div>
       </section>
 

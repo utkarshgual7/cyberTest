@@ -11,13 +11,13 @@ const Leaderboard = () => {
       try {
         const response = await fetch("/api/score/getleaderboard");
         if (!response.ok) {
-          throw new Error("Failed to fetch leaderboard");
+          throw new Error("Failed to fetch leaderboard or NO DATA FOUND");
         }
         const data = await response.json();
         setLeaderboard(data.leaderboard);
       } catch (err) {
         console.error("Error fetching leaderboard:", err);
-        setError("Failed to fetch leaderboard");
+        setError("Failed to fetch leaderboard or NO DATA FOUND");
       } finally {
         setLoading(false);
       }

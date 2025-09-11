@@ -43,7 +43,13 @@ export const signup = async (req, res, next) => {
       { expiresIn: "1h" }
     );
 
-    res.status(201).cookie("access_token", tokenjwt, { httpOnly: true }).json({
+    // Send the token as a cookie and respond with user details
+    res.status(201).cookie("access_token", tokenjwt, { 
+      httpOnly: true,
+      sameSite: "none",
+      secure: true, // Only in production with HTTPS
+      maxAge: 3600000 // 1 hour
+    }).json({
       message: "User registered successfully",
       user: { id: newUser._id, name: newUser.name, email: newUser.email },
     });
@@ -82,10 +88,15 @@ export const login = async (req, res, next) => {
     );
 
     // Send the token as a cookie and respond with user details
-    res.status(200)
-      .json({
-         id: validUser._id, name: validUser.name, email: validUser.email , role:validUser.role
-  });
+    res.status(200).cookie("access_token", tokenjwt, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true, // Only in production with HTTPS
+      maxAge: 3600000 // 1 hour
+    }).json({
+      message: "Login successful",
+      user: { id: validUser._id, name: validUser.name, email: validUser.email, role: validUser.role }
+    });
   } catch (error) {
     next(error);
   }

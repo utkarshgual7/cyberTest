@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-import "../styles/Login.css"; // Make sure to create this CSS file
+import "../styles/Login.css";
+import "../styles/Message.css";
 import {
   signInFailure,
   signInStart,
@@ -15,6 +16,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // 'error' or 'success'
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -22,7 +25,7 @@ const Login = () => {
   const buttonStyle = {
     textDecoration: "none",
     background: "none",
-    color: isHovered ? "#ff6347" : "#fff", // Changes color on hover
+    color: isHovered ? "#ff6347" : "#fff",
     border: "none",
     cursor: "pointer",
     fontWeight: "bold",
@@ -30,6 +33,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Reset messages
+    setMessage("");
+    setMessageType("");
+
+    // Basic validation
+    if (!email || !password) {
+      setMessage("Please fill in all fields.");
+      setMessageType("error");
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       dispatch(signInStart());
@@ -45,26 +61,35 @@ const Login = () => {
       if (response.ok) {
         dispatch(signInSuccess(data));
         setMessage("Login successful!");
-        navigate("/");
-        // Optionally redirect or perform additional actions
+        setMessageType("success");
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
       } else {
+        // Handle specific error cases
+        if (response.status === 401) {
+          setMessage(data.message || "Invalid email or password. Please try again.");
+        } else if (data.message) {
+          setMessage(data.message);
+        } else {
+          setMessage("Login failed. Please try again.");
+        }
+        setMessageType("error");
         dispatch(signInFailure(data.message || "Login failed"));
-        setMessage(data.message || "Login failed.");
       }
     } catch (error) {
-      dispatch(signInFailure(data.message || "Login failed"));
-      setMessage("An error occurred. Please try again later.");
+      setMessage("Network error. Please check your connection and try again.");
+      setMessageType("error");
+      dispatch(signInFailure("Network error. Please try again later."));
+    } finally {
+      setIsLoading(false);
     }
-
-    // Reset form fields
-    setEmail("");
-    setPassword("");
   };
 
   return (
     <div className="login-container">
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={isLoading ? "loading" : ""}>
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
@@ -73,6 +98,7 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div className="form-group">
@@ -83,10 +109,15 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
-        <button type="submit" className="btn">
-          Login
+        <button 
+          type="submit" 
+          className="btn"
+          disabled={isLoading}
+        >
+          {isLoading ? "Logging in..." : "Login"}
         </button>
         <a
           style={buttonStyle}
@@ -97,9 +128,11 @@ const Login = () => {
           Back to home
         </a>
       </form>
-      {message && <div className="message">{message}</div>}
-
-      {/* Display error messages */}
+      {message && (
+        <div className={`message ${messageType}`}>
+          {message}
+        </div>
+      )}
     </div>
   );
 };

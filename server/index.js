@@ -29,6 +29,27 @@ app.use(cors({
 app.use('/api/auth', authRoutes); 
 app.use('/api/score', scoreRoutes); 
 app.use('/api/test', testControlRoutes)
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  console.error(err); // Log the error for debugging
+  
+  return res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+  });
+});
+
+// Handle non-existent routes
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
+});
 
 
 // Start the server

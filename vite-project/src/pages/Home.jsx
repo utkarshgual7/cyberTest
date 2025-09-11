@@ -38,7 +38,7 @@ const Home = () => {
               <li>
                 <Link to="/">Contact Us</Link>
               </li>
-              {user1 && user1.role === "Admin" && (
+              {user1 && user1.user.role === "admin" && (
                 <li>
                   <Link to="/adminconsole">Admin</Link>
                 </li>
@@ -52,6 +52,7 @@ const Home = () => {
                   Login
                 </Link>
               )}
+
               <li>
                 <Link to="/">FAQ</Link>
               </li>

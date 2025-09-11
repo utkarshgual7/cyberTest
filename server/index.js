@@ -21,9 +21,10 @@ app.use(express.json()); // Parses JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parses URL-encoded bodies (for FormData)
 
 app.use(cors({
-  origin: 'https://localhost:5173/', // Replace with your frontend URL
+  origin: 'http://localhost:5173', // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+  credentials: true // Allow credentials
 }));
 
 app.use('/api/auth', authRoutes); 
